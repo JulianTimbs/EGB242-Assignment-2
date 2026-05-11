@@ -9,6 +9,7 @@ clear all; close all;
 
 % Begin writing your MATLAB solution below this line.
 %% 2.1
+
 % Plot comparison between the step input and the step response
 % g_m(t) = 2(1 - e^-0.5t)
 
@@ -25,20 +26,15 @@ timeVec(end) = [];
 % Input step
 inputStep = ones(size(timeVec));
 
-% Transfer function
-num1 = [1];
-den1 = [1, 0.5, 0];
-H1 = tf(num1, den1);
-
 % Impulse response
 g_m = 2 * (1 - exp(-0.5 * timeVec));
 
-% Step Response using lsim()
-stepResponse = lsim(H1, inputStep, timeVec);
+% Step Response from hand working
+g_step = -4 + 2 * timeVec + 4 * exp(-0.5 * timeVec);
 
 % Step response plot
 figure;
-plot(timeVec, stepResponse);
+plot(timeVec, g_step);
 hold on;
 plot(timeVec, inputStep);
 
@@ -47,3 +43,9 @@ xlabel("Time [s]");
 ylabel("Rotation [rad]");
 legend("Step Response", "Input Step");
 % plot diverges -> inf so motor alone isn't sufficient to control camera
+
+%% 2.2 
+% Supervisor's suggestion is justified
+
+%% 2.3
+
