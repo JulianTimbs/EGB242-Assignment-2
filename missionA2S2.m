@@ -22,9 +22,6 @@ ts = 1 / fs;
 timeVec = linspace(0, T, samples + 1);
 timeVec(end) = [];
 
-% input impulse
-inputImpulse = [1/ts, zeros(1, samples - 1)];
-
 % Input step
 inputStep = ones(size(timeVec));
 
@@ -34,7 +31,7 @@ den1 = [1, 0.5, 0];
 H1 = tf(num1, den1);
 
 % Impulse response
-g_m = 2 * (1 - exp(0.5* timeVec));
+g_m = 2 * (1 - exp(-0.5 * timeVec));
 
 % Step Response using lsim()
 stepResponse = lsim(H1, inputStep, timeVec);
@@ -42,7 +39,11 @@ stepResponse = lsim(H1, inputStep, timeVec);
 % Step response plot
 figure;
 plot(timeVec, stepResponse);
+hold on;
+plot(timeVec, inputStep);
+
 title("Step Response of DC Motor");
 xlabel("Time [s]");
 ylabel("Rotation [rad]");
+legend("Step Response", "Input Step");
 % plot diverges -> inf so motor alone isn't sufficient to control camera
