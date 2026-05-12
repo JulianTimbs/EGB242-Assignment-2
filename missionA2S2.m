@@ -63,3 +63,13 @@ xlabel("Time [s]");
 ylabel("Rotation [rad]");
 legend("Step Response", "Input Step");
 % System converges now (under-damped)
+
+%% 2.4
+
+% I think maybe need to wait for week 11 lecture??
+% w_n = 1, zeta = 0.25
+% Still not appropriate for controlling camera displacement because of
+% massive overshoot
+
+%% 2.5
+% TF = K_fwd / (s^2 + 0.5s + K_fwd * K_fb)
