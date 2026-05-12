@@ -37,7 +37,6 @@ figure;
 plot(timeVec, g_step);
 hold on;
 plot(timeVec, inputStep);
-
 title("Step Response of DC Motor");
 xlabel("Time [s]");
 ylabel("Rotation [rad]");
@@ -49,3 +48,18 @@ legend("Step Response", "Input Step");
 
 %% 2.3
 
+num = 1;
+den = [1, 0.5, 1];
+
+F = tf(num, den);
+
+F_step = lsim(F, inputStep, timeVec);
+figure;
+plot(timeVec, F_step);
+hold on;
+plot(timeVec, inputStep);
+title("Step Response of DC Motor with Potentiometer");
+xlabel("Time [s]");
+ylabel("Rotation [rad]");
+legend("Step Response", "Input Step");
+% System converges now (under-damped)
