@@ -74,4 +74,4 @@ for i = 1:4
 end
 
 %% 3.3
-
+% Looking for low-pass filter ~50 Hz cut-off I think
