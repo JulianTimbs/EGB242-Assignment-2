@@ -69,6 +69,7 @@ legend("Step Response", "Input Step");
 % w_n = 1, zeta = 0.25
 % Still not appropriate for controlling camera displacement because of
 % massive overshoot
+% Hand working for this
 
 % T_p = 3.245 s
 % T_s = 16 s
@@ -140,3 +141,10 @@ cameraTF = tf(num4, den4);
 cameraTF_step = lsim(cameraTF, inputStep, timeVec);
 
 ltiview(cameraTF)
+
+%% 2.7
+
+[startIm, finalIm] = cameraPan(0.08333, 0.58333, cameraTF);
+% Panorama starts at 30 degrees and finishes at 210 degrees, slight
+% overshoot to ~218 degrees because system under damped due to motor
+% limitations.
