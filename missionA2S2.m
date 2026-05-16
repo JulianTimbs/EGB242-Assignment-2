@@ -84,6 +84,7 @@ Kfb_values = [0.1, 0.2, 0.5, 1, 2];
 legendEntries_fb = cell(1, length(Kfb_values));
 legendEntries_fwd = cell(1, length(Kfwd_values));
 
+% TODO: MAKE LOOPS INTO FUNCTIONS
 % Step Response w/ variable K_fb, constant K_fwd
 figure;
 for i = 1:length(Kfb_values)
