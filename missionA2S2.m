@@ -66,10 +66,13 @@ legend("Step Response", "Input Step");
 
 %% 2.4
 
-% I think maybe need to wait for week 11 lecture??
 % w_n = 1, zeta = 0.25
 % Still not appropriate for controlling camera displacement because of
 % massive overshoot
+
+% T_p = 3.245 s
+% T_s = 16 s
+% %OS = 44.34%
 
 %% 2.5
 % TF = K_fwd / (s^2 + 0.5s + K_fwd * K_fb)
@@ -78,7 +81,9 @@ Kfwd_values = [0.1, 0.2, 0.5, 1, 2];
 Kfb_values = [0.1, 0.2, 0.5, 1, 2];
 
 legendEntries_fb = cell(1, length(Kfb_values));
+legendEntries_fwd = cell(1, length(Kfwd_values));
 
+% Step Response w/ variable K_fb, constant K_fwd
 figure;
 for i = 1:length(Kfb_values)
     K_fb = Kfb_values(i);
@@ -97,8 +102,7 @@ xlabel("Time [s]");
 ylabel("Rotation [rad]"); %TODO: Put proper ylabel
 legend(legendEntries_fb);
 
-legendEntries_fwd = cell(1, length(Kfwd_values));
-
+% Step Response w/ variable K_fwd, constant K_fb
 figure;
 for i = 1:length(Kfwd_values)
     K_fwd = Kfwd_values(i);
@@ -116,3 +120,23 @@ title("Step Response of DC Motor System with Forward Gain");
 xlabel("Time [s]");
 ylabel("Rotation [rad]"); %TODO: Put proper ylabel
 legend(legendEntries_fwd);
+
+%% 2.6
+% From the formulas used to find the system parameters in 2.4 and the analysis in 2.5,
+% determine the gain values for Gg(s) and Hg(s) which make the camera control system
+% conform to these specifications and store this tf object as cameraTF.
+%   - Accurately rotate to any angle (i.e., from 0 to 2π rad) from the range of input
+%       voltages.
+%   - Not rotate too quickly during the pan, or else the images will become blurred. To
+%       limit the angular velocity of the camera, set the time to peak Tp as instructed by
+%       your colleague when running the startHere.m script.
+%       - Tp = 13
+
+num4 = [0.76];
+den4 = [1, 0.5, 0.1209];
+
+cameraTF = tf(num4, den4);
+
+cameraTF_step = lsim(cameraTF, inputStep, timeVec);
+
+ltiview(cameraTF)
