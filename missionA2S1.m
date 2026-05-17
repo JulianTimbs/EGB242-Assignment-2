@@ -65,8 +65,7 @@ inputImpulse = [1/ts, zeros(1, samples-1)];
 % pass the impulse throught the channel to obtain the impulse response
 h = channel(sid, inputImpulse, fs);
 
-% convert the noisy multiplexed audio into the frequency domain to find
-% H(f)
+% estimate the channel frequency response using the FFT of h(t)
 H = fftshift(fft(h)) * ts;
 
 % convert the audio into the frequency domain
