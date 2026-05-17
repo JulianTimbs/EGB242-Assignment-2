@@ -75,3 +75,23 @@ end
 
 %% 3.3
 % Looking for low-pass filter ~50 Hz cut-off I think
+
+% Circuit element variables
+R = 820;
+C = 1e-6;
+R1 = 1200;
+R2 = 1000;
+C1 = 10e-6;
+C2 = 4.7e-6;
+
+% Passive filter 1 transfer function
+pFilter1_num = [1/R2*C2, 0];
+pFilter1_den = [1, (C2*R1 + C1*R1 + R2*C2)/(R2*R1*C1*C2), 1/(R2*R1*C1*C2)];
+
+pFilter1_TF = tf(pFilter1_num, pFilter1_den);
+
+% Passive filter 2 transfer function
+pFilter2_num = [1/(C1*C2*R1*R2)];
+pFilter2_den = [1, (C2*R1 + C2*R2 + C1*R1)/(C1*C2*R1*R2), 1/(C1*C2*R2*R1)];
+
+pFilter2_TF = tf(pFilter2_num, pFilter2_den);
