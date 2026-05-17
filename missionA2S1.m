@@ -12,11 +12,14 @@ load DataA2 audioMultiplexNoisy fs sid;
 
 %% 1.1
 
+% store the noisy multiplex signal and define key sampling and time
+% variables
 audio = audioMultiplexNoisy;
 samples = length(audio);
 ts = 1/fs;
 T = samples/fs;
 
+% create time and frequency vecotors for plotting 
 t = (0:samples-1)/fs;
 
 f = linspace(-fs/2, fs/2, samples +1);
@@ -44,21 +47,29 @@ grid on
 
 %% 1.2
 
+% define the carrier frequencies and low-pass filter cutoff used for
+% demodulation
 carrierF = [72080 56030 40150 24290 8320];
 cutoffF = 2000;
 
+% demodulate the noisy multiplexed signal to recover each audio stream
 demodAudio = demodStreams(audio, carrierF, cutoffF, fs, 'Noisy');
 
 
 
 %% 1.3
 
+% Generate a discrete impulse to measure the channel impulse response 
 inputImpulse = [1/ts, zeros(1, samples-1)];
 
+% pass the impulse throught the channel to obtain the impulse response
 h = channel(sid, inputImpulse, fs);
 
+% convert the noisy multiplexed audio into the frequency domain to find
+% H(f)
 H = fftshift(fft(h)) * ts;
 
+% convert the audio into the frequency domain
 noisyAudio = fftshift(fft(audio)) / samples;
 
 
@@ -83,18 +94,21 @@ grid on;
 
 
 %% 1.4
-
+% apply inverse filtering in the frequency domain to remove the channel
+% effet
 H = fft(h) * ts;
 Y = fft(audio);
 
 X = Y ./ H;
 
+% converting the signal to the time domain and remove DC offset
 cleanAudio = real(ifft(X));
 cleanAudio = cleanAudio - mean(cleanAudio);
 
+% convert to the frequency domain for plotting
 cleanAudioF = fftshift(fft(cleanAudio))/samples;
 
-
+% plot the cleaned multiplexed signal in the time and frequency domain
 figure
 subplot(2,1,1)
 plot(t, cleanAudio)
@@ -110,34 +124,44 @@ ylabel('Magnitude')
 title('Clean Multiplexed Audio Signal in the Frequency Domain')
 grid on
 
+% demodulate the cleaned multiplexed signal to recover the individual
+% streams
 cleanDemodAudio = demodStreams(cleanAudio, carrierF, cutoffF, fs, 'Clean')
 
 %% 1.5
 
+% define the single-tone frequencies identified in the demodulated streams 
 noiseF = [2047 2467 2179 2079 2389];
 frequencyBand = 20;
 
+% preallocating a cell array to store the de-noised audio streams
 finalAudio = cell(1, length(cleanDemodAudio));
 
 for k = 1:length(cleanDemodAudio)
-
+    % select the current demodulated stream
     audioSignal = cleanDemodAudio{k};
     samplesSignal = length(audioSignal);
-
+    
+    % create a frequency vectore for the current stream
     signalF = linspace(-fs/2, fs/2, samplesSignal + 1);
     signalF(end) = [];
 
     audioSignalF = fftshift(fft(audioSignal));
     
+    % identify frequency bins around the unwanted single-tone noise
     bins = abs(abs(signalF) - noiseF(k)) < frequencyBand;
-
-    audioSignalF(bins) = 0
-
+    % remove the unwanted tone by setting those frequency components to 0
+    audioSignalF(bins) = 0;
+    
+    % convert back to the time domain and reomve DC offset
     finalAudio{k} = real(ifft(ifftshift(audioSignalF)));
     finalAudio{k} = finalAudio{k} - mean(finalAudio{k});
 
     finalAudioF = fftshift(fft(finalAudio{k})) / samplesSignal;
 
+
+    % plot the final de-noised audio stream in the time and frequency
+    % domain
     figure
     subplot(2,1,1)
     plot((0:samplesSignal-1)/fs, finalAudio{k})
@@ -161,6 +185,10 @@ end
 
 %% Functions
 function demodAudio = demodStreams(inputAudio, carrierF, cutoffF, fs, labelName)
+    % This function demodulates each carrier frequency by shifting the selected
+    % stream to baseband, low-pass filtering it, and plotting the recovered
+    % audio 
+
     inputAudio = inputAudio;
     samples = length(inputAudio);
     
@@ -169,22 +197,25 @@ function demodAudio = demodStreams(inputAudio, carrierF, cutoffF, fs, labelName)
     f = linspace(-fs/2, fs/2, samples +1);
     f(end) = [];
 
-
+    % repeat the process for each carrier frequency
     for k = 1:length(carrierF)
 
         fc = carrierF(k);
-
+        
+        % shift the selected carrier signal down to baseband
         shift = inputAudio .* 2.*cos(2*pi*fc*t);
-    
+        
+        % apply a low-pass filter to isolate the audio component
         demod = lowpass(shift, cutoffF, fs);
     
         demod = demod - mean(demod);
-    
+        
+        % store the recovered audio stream
         demodAudio{k} = demod;
     
         demodf = fftshift(fft(demod))/samples;
     
-    
+        % plot the demodulated streams in the frequency and time domains
         figure
         subplot(2,1,1)
         plot(t, demod)
