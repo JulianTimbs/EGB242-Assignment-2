@@ -69,7 +69,7 @@ for i = 1:4
     subplot(2, 1, 2);
     plot(f, unwrap(fftshift(angle(im_freq(i,:)))));
     title(sprintf('Phase Spectrum - Image %d', i));
-    xlabel("Frequency [Hz");
+    xlabel("Frequency [Hz]");
     ylabel("Phase [rad]");
 end
 
