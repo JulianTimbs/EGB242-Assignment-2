@@ -149,8 +149,9 @@ fc_active2 = 125;
 
 t_col = t.';                          % make time vector column
 
-% Apply Active Filter 2
-clean_signal = lsim(aFilter2_TF, im1_signal, t_col);
+% Apply Active Filter 2 twice for better results
+clean_signal1 = lsim(aFilter2_TF, im1_signal, t_col);
+clean_signal = lsim(aFilter2_TF, clean_signal1, t_col);
 
 % Convert the filtered signal back into an image
 clean_image = reshape(clean_signal, numRows, numCols);
@@ -202,7 +203,8 @@ for i = 1:numImages
     % Get received image signal
     image_signal = imagesReceived(i,:).';
 
-    clean_signal = lsim(aFilter2_TF, image_signal, t_col);
+    clean_signal1 = lsim(aFilter2_TF, image_signal, t_col);
+    clean_signal = lsim(aFilter2_TF, clean_signal1, t_col);
 
     clean_image = reshape(clean_signal, numRows, numCols);
 
