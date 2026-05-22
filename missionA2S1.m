@@ -93,8 +93,7 @@ grid on;
 
 
 %% 1.4
-% apply inverse filtering in the frequency domain to remove the channel
-% effet
+% apply inverse filtering in the frequency domain to remove the channel effet
 H = fft(h) * ts;
 Y = fft(audio);
 
