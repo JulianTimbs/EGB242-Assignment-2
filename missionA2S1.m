@@ -124,7 +124,7 @@ grid on
 
 % demodulate the cleaned multiplexed signal to recover the individual
 % streams
-cleanDemodAudio = demodStreams(cleanAudio, carrierF, cutoffF, fs, 'Clean')
+cleanDemodAudio = demodStreams(cleanAudio, carrierF, cutoffF, fs, 'Clean');
 
 %% 1.5
 
@@ -187,7 +187,6 @@ function demodAudio = demodStreams(inputAudio, carrierF, cutoffF, fs, labelName)
     % stream to baseband, low-pass filtering it, and plotting the recovered
     % audio 
 
-    inputAudio = inputAudio;
     samples = length(inputAudio);
     
     t = (0:samples-1)/fs;
