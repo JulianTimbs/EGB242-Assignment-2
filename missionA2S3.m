@@ -61,7 +61,7 @@ plot(t, im1_signal);
 title(sprintf('Time Domain Plot - Image 1'))
 xlabel("Time [s]");
 ylabel("Amplitude");
-
+xlim([1 300])
 
 % Frequency domain (mag & phase spectrum) plot of image
 
@@ -147,14 +147,11 @@ fc_active2 = 125;
 
 % using the chosen filter (active filter 2) to remove the recieved signal 
 
-t_col = t.';                          % make time vector column
 
 % Apply Active Filter 2 twice for better results
-clean_signal1 = lsim(aFilter2_TF, im1_signal, t_col);
-clean_signal = lsim(aFilter2_TF, clean_signal1, t_col);
+% function at the bottom of file
+[clean_signal, clean_image] = denoiseImage(im1_signal, aFilter2_TF, t, numRows, numCols);
 
-% Convert the filtered signal back into an image
-clean_image = reshape(clean_signal, numRows, numCols);
 
 % Display original and cleaned image
 figure;
@@ -168,6 +165,7 @@ xlabel('Time [s]');
 ylabel('Pixel Intensity');
 title('Cleaned Image Signal in the Time Domain');
 grid on;
+xlim([1 300])
 
 % visualise the clean image signal in the frequency domain
 
@@ -203,10 +201,7 @@ for i = 1:numImages
     % Get received image signal
     image_signal = imagesReceived(i,:).';
 
-    clean_signal1 = lsim(aFilter2_TF, image_signal, t_col);
-    clean_signal = lsim(aFilter2_TF, clean_signal1, t_col);
-
-    clean_image = reshape(clean_signal, numRows, numCols);
+    [clean_signal, clean_image] = denoiseImage(image_signal, aFilter2_TF, t, numRows, numCols);
 
     % Store clean image
     cleanImages{i} = clean_image;
@@ -218,3 +213,19 @@ for i = 1:numImages
 
 end
 
+%% Function
+
+function [clean_signal, clean_image] = denoiseImage(image_signal, filterTF, t, numRows, numCols)
+
+    % Make image signal and time vector column vectors for lsim
+    image_signal = image_signal(:);
+    t_col = t(:);
+
+    % Apply the selected filter twice for stronger noise reduction
+    clean_signal1 = lsim(filterTF, image_signal, t_col);
+    clean_signal = lsim(filterTF, clean_signal1, t_col);
+
+    % Convert filtered 1D signal back into 2D image
+    clean_image = reshape(clean_signal, numRows, numCols);
+
+end

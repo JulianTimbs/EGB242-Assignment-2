@@ -182,7 +182,7 @@ for k = 1:length(cleanDemodAudio)
 
 end
 
-%% Functions
+%% Function
 function demodAudio = demodStreams(inputAudio, carrierF, cutoffF, fs, labelName)
     % This function demodulates each carrier frequency by shifting the selected
     % stream to baseband, low-pass filtering it, and plotting the recovered
