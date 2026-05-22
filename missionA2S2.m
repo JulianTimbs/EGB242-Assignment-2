@@ -34,13 +34,15 @@ g_step = -4 + 2 * timeVec + 4 * exp(-0.5 * timeVec);
 
 % Step response plot
 figure;
-plot(timeVec, g_step);
+plot(timeVec, g_step, 'LineWidth', 1);
 hold on;
-plot(timeVec, inputStep);
+plot(timeVec, inputStep, 'LineWidth', 1);
+hold off;
 title("Step Response of DC Motor");
 xlabel("Time [s]");
-ylabel("Rotation [rad]"); %TODO: Put proper ylabel
+ylabel("Rotation [rad]");
 legend("Step Response", "Input Step");
+saveas(gcf, 'Step Response of DC Motor.jpg')
 % plot diverges -> inf so motor alone isn't sufficient to control camera
 
 %% 2.2 
@@ -55,13 +57,15 @@ F = tf(num, den);
 
 F_step = lsim(F, inputStep, timeVec);
 figure;
-plot(timeVec, F_step);
+plot(timeVec, F_step, 'LineWidth', 1);
 hold on;
-plot(timeVec, inputStep);
+plot(timeVec, inputStep, 'LineWidth', 1);
+hold off;
 title("Step Response of DC Motor with Potentiometer");
 xlabel("Time [s]");
-ylabel("Rotation [rad]"); %TODO: Put proper ylabel
+ylabel("Rotation [rad]");
 legend("Step Response", "Input Step");
+saveas(gcf, 'Step Response of DC Motor with Feedback.png')
 % System converges now (under-damped)
 
 %% 2.4
@@ -93,7 +97,7 @@ for i = 1:length(Kfb_values)
     den2 = [1, 0.5, K_fb];
     F_gain = tf(num2, den2);
     F_gain_step = lsim(F_gain, inputStep, timeVec);
-    plot(timeVec, F_gain_step);
+    plot(timeVec, F_gain_step, 'LineWidth', 1);
     hold on;
     legendEntries_fb{i} = sprintf('K_{fb} = %.1f', K_fb);
 end
@@ -101,8 +105,9 @@ legend(legendEntries_fb);
 hold off;
 title("Step Response of DC Motor System with Feedback Gain");
 xlabel("Time [s]");
-ylabel("Rotation [rad]"); %TODO: Put proper ylabel
+ylabel("Rotation [rad]");
 legend(legendEntries_fb);
+saveas(gcf, 'Step Response of DC Motor System with Feedback Gain.png')
 
 % Step Response w/ variable K_fwd, constant K_fb
 figure;
@@ -112,7 +117,7 @@ for i = 1:length(Kfwd_values)
     den3 = [1, 0.5, K_fwd];
     F_gain = tf(num3, den3);
     F_gain_step = lsim(F_gain, inputStep, timeVec);
-    plot(timeVec, F_gain_step);
+    plot(timeVec, F_gain_step, 'LineWidth', 1);
     hold on;
     legendEntries_fwd{i} = sprintf('K_{fwd} = %.1f', K_fwd);
 end
@@ -120,8 +125,9 @@ legend(legendEntries_fwd);
 hold off;
 title("Step Response of DC Motor System with Forward Gain");
 xlabel("Time [s]");
-ylabel("Rotation [rad]"); %TODO: Put proper ylabel
+ylabel("Rotation [rad]");
 legend(legendEntries_fwd);
+saveas(gcf, 'Step Response of DC Motor System with Forward Gain.png')
 
 %% 2.6
 % From the formulas used to find the system parameters in 2.4 and the analysis in 2.5,
@@ -141,7 +147,12 @@ cameraTF = tf(num4, den4);
 
 cameraTF_step = lsim(cameraTF, inputStep, timeVec);
 
-ltiview(cameraTF)
+figure;
+plot(timeVec, cameraTF_step, 'LineWidth', 1);
+title("Step Response of DC Motor System with Feedback and Gain");
+xlabel("Time [s]");
+ylabel("Rotation [rad]");
+saveas(gcf, "Step Response of DC Motor System with Feedback and Gain.png")
 
 %% 2.7
 
